@@ -1,0 +1,164 @@
+
+-- 1
+select p.ProductId, p.Name, o.OrderDate, sum(oi.quantity) as orderedNumber
+from Orders as o  
+left join OrderItems as oi
+on o.OrderId = oi.OrderId
+left join Products as p
+on oi.ProductId = p.ProductId
+where o.OrderDate >= dateadd(day, -30, getdate()) and oi.OrderId is not null
+group by p.ProductId, p.Name,o.OrderDate
+order by o.OrderDate
+
+
+-- 2
+select top 1 P.ProductID, P.Name, sum(oi.quantity) as orderedProductQuantity
+from Products as p
+inner join OrderItems as oi
+on p.ProductID = oi.ProductID
+group by p.ProductID, p.name
+order by orderedProductQuantity desc
+
+-- 3
+select p.*, oi.OrderID
+from Products as p
+left join OrderItems as oi
+on p.ProductID = oi.ProductID
+where oi.ProductID is null
+
+-- 4
+select p.ProductID, p.Name, sum(p.Price * oi.Quantity) as revenue
+from Products as p
+join OrderItems as oi
+on p.ProductID = oi.ProductID
+where oi.Quantity is not null and oi.Quantity != 0
+group by p.ProductID, p.Name
+
+-- 5
+select month(o.orderdate) as Month, count(o.orderId) as TotalOrders
+from Orders as o
+where year(o.orderDate) = 2024
+group by month(o.OrderDate)
+order by Month
+
+
+
+create database Exam4th
+
+use Exam4th;
+
+create table Customers(
+	CustomerId int primary key identity(1,1),
+	Name nvarchar(100),
+	Email nvarchar(100)
+);
+create table Orders(
+	OrderId int primary key identity(1,1),
+	CustomerId int foreign key references Customers(CustomerId),
+	OrderDate datetime default getdate()
+);
+
+create table Products(
+	ProductId int primary key identity(1,1),
+	Name nvarchar(100),
+	Price decimal(10,2)
+);
+
+create table OrderItems(
+	OrderItemId int primary key identity(1,1),
+	OrderId int foreign key references Orders(OrderId),
+	ProductId int foreign key references Products(ProductId),
+	Quantity int,
+	Price decimal(10,2)
+);
+
+
+INSERT INTO Customers (Name, Email) VALUES
+('Ali Vali', 'ali.vali@email.com'),
+('Alisher Orolov', 'alisher.dev@email.com'),
+('Bobur Juraev', 'Bobur.jurayev@email.com'),
+('Emma Brown', 'emma.brown@email.com'),
+('James Wilson', 'james.wilson@email.com'),
+('Olivia Martinez', 'olivia.martinez@email.com'),
+('Liam Garcia', 'liam.garcia@email.com'),
+('Sophia Lee', 'sophia.lee@email.com'),
+('Mason Hall', 'mason.hall@email.com'),
+('Isabella Allen', 'isabella.allen@email.com'),
+('Ethan Young', 'ethan.young@email.com'),
+('Ava King', 'ava.king@email.com'),
+('Michael Wright', 'michael.wright@email.com'),
+('Charlotte Scott', 'charlotte.scott@email.com'),
+('Daniel Green', 'daniel.green@email.com'),
+('Harper Adams', 'harper.adams@email.com'),
+('Benjamin Baker', 'benjamin.baker@email.com'),
+('Amelia Gonzalez', 'amelia.gonzalez@email.com'),
+('Lucas Nelson', 'lucas.nelson@email.com'),
+('Mia Carter', 'mia.carter@email.com');
+
+
+INSERT INTO Products (Name, Price) VALUES
+('Dodge Chalanger', 100000.00),
+('Boxing gloves', 800.00),
+('Headphones', 150.00),
+('Smartwatch', 250.00),
+('Keyboard', 50.00),
+('Mouse', 30.00),
+('Monitor', 300.00),
+('External HDD', 100.00),
+('Gaming Chair', 400.00),
+('Desk Lamp', 40.00),
+('USB Flash Drive', 20.00),
+('Wireless Router', 120.00),
+('Graphics Card', 500.00),
+('Power Bank', 70.00),
+('Webcam', 60.00),
+('Microphone', 110.00),
+('VR Headset', 700.00),
+('Portable Speaker', 90.00),
+('Coffee Maker', 130.00),
+('Fitness Tracker', 200.00);
+
+
+INSERT INTO Orders (CustomerID, OrderDate) VALUES
+(8, '2024-04-15'),
+(8, '2024-06-20'),
+(8, '2024-01-05'),
+(8, '2024-03-10'),
+(8, '2024-03-15'),
+(8, '2024-02-20'),
+(8, '2024-03-05'),
+(9, '2024-02-15'),
+(9, '2025-02-20'),
+(13, '2025-02-05'),
+(7, '2025-02-10'),
+(7, '2025-02-15'),
+(20, '2025-02-20'),
+(7, '2025-03-05');
+
+
+
+INSERT INTO OrderItems (OrderID, ProductID, Quantity, Price) VALUES
+(1, 1, 1, 1200.00), 
+(1, 2, 2, 800.00),
+(2, 3, 3, 150.00),
+(2, 4, 1, 250.00),
+(3, 5, 2, 50.00),
+(3, 6, 1, 30.00),
+(4, 7, 1, 300.00),
+(4, 8, 2, 100.00),
+(5, 9, 1, 400.00),
+(5, 10, 3, 40.00),
+(6, 11, 4, 20.00),
+(6, 12, 1, 120.00),
+(7, 13, 1, 500.00),
+(7, 14, 2, 70.00),
+(8, 15, 1, 60.00),
+(8, 16, 1, 110.00),
+(9, 17, 1, 700.00),
+(9, 18, 2, 90.00),
+(10, 19, 1, 130.00),
+(10, 20, 3, 200.00);
+
+
+
+
